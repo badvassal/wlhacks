@@ -1,0 +1,12 @@
+.gdb_history
+*.swp
+
+# Ignore tool binaries
+wldec
+!wldec/
+wlcheat
+!wlcheat/
+wltransloc
+!wltransloc/
+wltset
+!wltset/
