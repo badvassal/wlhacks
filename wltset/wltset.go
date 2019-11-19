@@ -51,12 +51,12 @@ func parseOperand(s string) (*defs.LocPair, error) {
 		toStr = parts[1]
 	}
 
-	from, err := wlmanip.ParseLocation(fromStr)
+	from, err := wlmanip.ParseLocationNoCase(fromStr)
 	if err != nil {
 		return nil, err
 	}
 
-	to, err := wlmanip.ParseLocation(toStr)
+	to, err := wlmanip.ParseLocationNoCase(toStr)
 	if err != nil {
 		return nil, err
 	}
