@@ -6,6 +6,8 @@ github.com/badvassal/wllib v0.0.2/go.mod h1:5ok43+VU8n52MiejMF399KinLLhC3EVKx9ZJ
 github.com/badvassal/wllib v0.0.4/go.mod h1:5ok43+VU8n52MiejMF399KinLLhC3EVKx9ZJsbMyE4s=
 github.com/badvassal/wllib v0.0.6 h1:hTMRZwiVF31J3YViL/4aLBUN5pUlkXcT/xKEyzWhotc=
 github.com/badvassal/wllib v0.0.6/go.mod h1:5ok43+VU8n52MiejMF399KinLLhC3EVKx9ZJsbMyE4s=
+github.com/badvassal/wllib v0.0.7 h1:1Qj4k8i/mM97chJmRtr9Cx86oAczIbl0hYtE60G2Zg8=
+github.com/badvassal/wllib v0.0.7/go.mod h1:5ok43+VU8n52MiejMF399KinLLhC3EVKx9ZJsbMyE4s=
 github.com/badvassal/wlmanip v0.0.1 h1:w+b06KATBh7MmvjTpDiHfdUe12Zvk42ebmv7X/Vl/aU=
 github.com/badvassal/wlmanip v0.0.1/go.mod h1:UAzTS98OG6oktxGwIYQLuRM3RdEUjbSuIQSPjebnNd8=
 github.com/badvassal/wlmanip v0.0.2 h1:LgOqFC79htcG4jQliqtOkFw1gpUCYYSPds/TomuaaOE=

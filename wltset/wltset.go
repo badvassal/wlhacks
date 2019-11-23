@@ -100,7 +100,7 @@ func tset(cfg tsetCfg) error {
 		ops = append(ops, *op)
 	}
 
-	blocks0, blocks1, err := wlutil.ReadGames(cfg.Dir)
+	blocks0, blocks1, err := wlutil.ReadAndParseGames(cfg.Dir)
 	if err != nil {
 		return err
 	}
@@ -123,7 +123,7 @@ func tset(cfg tsetCfg) error {
 		return err
 	}
 
-	if err := wlutil.WriteGames(blocks0, blocks1, cfg.Dir); err != nil {
+	if err := wlutil.SerializeAndWriteGames(blocks0, blocks1, cfg.Dir); err != nil {
 		return err
 	}
 

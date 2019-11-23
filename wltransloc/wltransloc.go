@@ -152,7 +152,7 @@ func main() {
 
 	inDir := os.Args[1]
 
-	blocks1, blocks2, err := wlutil.ReadGames(inDir)
+	blocks1, blocks2, err := wlutil.ReadAndParseGames(inDir)
 	if err != nil {
 		onErr(err)
 	}

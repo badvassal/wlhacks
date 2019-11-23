@@ -56,7 +56,7 @@ func main() {
 
 	inDir := os.Args[1]
 
-	blocks0, blocks1, err := wlutil.ReadGames(inDir)
+	blocks0, blocks1, err := wlutil.ReadAndParseGames(inDir)
 	if err != nil {
 		onErr(err)
 	}
@@ -83,7 +83,7 @@ func main() {
 		}
 	}
 
-	if err := wlutil.WriteGames(blocks0, blocks1, inDir); err != nil {
+	if err := wlutil.SerializeAndWriteGames(blocks0, blocks1, inDir); err != nil {
 		onErr(err)
 	}
 }
