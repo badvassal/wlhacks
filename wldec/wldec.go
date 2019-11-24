@@ -148,6 +148,12 @@ func dumpBlock(block msq.Block, gameIdx int, blockIdx int, outDir string) error 
 		return decErr(err)
 	}
 
+	if err := dumpJson(db.ActionTables.Loots,
+		outDir+"/loots.json"); err != nil {
+
+		return decErr(err)
+	}
+
 	if err := dumpJson(db.MonsterNames, outDir+"/monsternames.json"); err != nil {
 		return decErr(err)
 	}
