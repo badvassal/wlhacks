@@ -61,6 +61,7 @@ func main() {
 		onErr(err)
 	}
 
+	// Set random encounter chance to 0.
 	if err := modifyBlocks(blocks0[:defs.Block0NumBlocks], defs.MapDims[0]); err != nil {
 		panic(err.Error())
 	}
@@ -68,6 +69,7 @@ func main() {
 		panic(err.Error())
 	}
 
+	// Set all PCs' attributes to 127.
 	for i := 0; i < 4; i++ {
 		blocks0[20].EncSection[i*0x100+0x10e] = 0x7f
 		blocks0[20].EncSection[i*0x100+0x10f] = 0x7f
@@ -78,6 +80,7 @@ func main() {
 		blocks0[20].EncSection[i*0x100+0x114] = 0x7f
 		blocks0[20].EncSection[i*0x100+0x11a] = 15
 
+		// Fill up PCs' inventory.
 		for j := 0; j < 50; j++ {
 			blocks0[20].EncSection[i*0x100+0x1bd+j] = byte(j)
 		}
