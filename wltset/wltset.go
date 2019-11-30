@@ -84,8 +84,8 @@ func parseTransOp(opString string) (*wlmanip.TransOp, error) {
 	}
 
 	return &wlmanip.TransOp{
-		A: *src,
-		B: *dst,
+		A: *dst,
+		B: *src,
 	}, nil
 }
 
