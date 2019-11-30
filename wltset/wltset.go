@@ -100,12 +100,15 @@ func tset(cfg tsetCfg) error {
 		ops = append(ops, *op)
 	}
 
-	blocks0, blocks1, err := wlutil.ReadAndParseGames(cfg.Dir)
+	descs0, descs1, err := wlutil.ReadAndParseGames(cfg.Dir)
 	if err != nil {
 		return err
 	}
 
-	state, err := wlutil.DecodeGames(blocks0, blocks1)
+	bodies0 := wlutil.DescsToBodies(descs0)
+	bodies1 := wlutil.DescsToBodies(descs1)
+
+	state, err := wlutil.DecodeGames(bodies0, bodies1)
 	if err != nil {
 		return err
 	}
@@ -119,11 +122,11 @@ func tset(cfg tsetCfg) error {
 		wlmanip.ExecTransOp(coll, state, op)
 	}
 
-	if err := wlutil.CommitDecodeState(*state, blocks0, blocks1); err != nil {
+	if err := wlutil.CommitDecodeState(*state, bodies0, bodies1); err != nil {
 		return err
 	}
 
-	if err := wlutil.SerializeAndWriteGames(blocks0, blocks1, cfg.Dir); err != nil {
+	if err := wlutil.SerializeAndWriteGames(bodies0, bodies1, cfg.Dir); err != nil {
 		return err
 	}
 

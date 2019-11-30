@@ -79,8 +79,8 @@ func findTransitions(db decode.Block) []TransMark {
 	return tms
 }
 
-func dumpBlock(block msq.Block, dim gen.Point) ([]map[string]interface{}, error) {
-	db, err := decode.DecodeBlock(block, dim)
+func dumpBlock(body msq.Body, dim gen.Point) ([]map[string]interface{}, error) {
+	db, err := decode.DecodeBlock(body, dim)
 	if err != nil {
 		return nil, err
 	}
@@ -104,11 +104,11 @@ func dumpBlock(block msq.Block, dim gen.Point) ([]map[string]interface{}, error)
 	return ms, nil
 }
 
-func dumpGame(blocks []msq.Block, dims []gen.Point) (map[string]interface{}, error) {
+func dumpGame(bodies []msq.Body, dims []gen.Point) (map[string]interface{}, error) {
 	var ms []map[string]interface{}
 
-	for i, block := range blocks {
-		blockMs, err := dumpBlock(block, dims[i])
+	for i, body := range bodies {
+		blockMs, err := dumpBlock(body, dims[i])
 		if err != nil {
 			return nil, err
 		}
@@ -121,17 +121,17 @@ func dumpGame(blocks []msq.Block, dims []gen.Point) (map[string]interface{}, err
 	}
 
 	return map[string]interface{}{
-		"blocks": ms,
+		"bodies": ms,
 	}, nil
 }
 
-func dumpGames(blocks1 []msq.Block, blocks2 []msq.Block) (map[string]interface{}, error) {
-	m1, err := dumpGame(blocks1, defs.MapDims[0])
+func dumpGames(bodies1 []msq.Body, bodies2 []msq.Body) (map[string]interface{}, error) {
+	m1, err := dumpGame(bodies1, defs.MapDims[0])
 	if err != nil {
 		return nil, err
 	}
 
-	m2, err := dumpGame(blocks2, defs.MapDims[1])
+	m2, err := dumpGame(bodies2, defs.MapDims[1])
 	if err != nil {
 		return nil, err
 	}
@@ -152,12 +152,15 @@ func main() {
 
 	inDir := os.Args[1]
 
-	blocks1, blocks2, err := wlutil.ReadAndParseGames(inDir)
+	descs0, descs1, err := wlutil.ReadAndParseGames(inDir)
 	if err != nil {
 		onErr(err)
 	}
 
-	m, err := dumpGames(blocks1[:defs.Block0NumBlocks], blocks2[:defs.Block1NumBlocks])
+	bodies0 := wlutil.DescsToBodies(descs0)
+	bodies1 := wlutil.DescsToBodies(descs1)
+
+	m, err := dumpGames(bodies0[:defs.Block0NumBlocks], bodies1[:defs.Block1NumBlocks])
 	if err != nil {
 		onErr(err)
 	}

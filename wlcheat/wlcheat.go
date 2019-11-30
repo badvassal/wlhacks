@@ -23,9 +23,9 @@ func onErr(err error) {
 	os.Exit(2)
 }
 
-func modifyBlocks(blocks []msq.Block, dims []gen.Point) error {
-	for i, _ := range blocks {
-		b := &blocks[i]
+func modifyBlocks(bodies []msq.Body, dims []gen.Point) error {
+	for i, _ := range bodies {
+		b := &bodies[i]
 		dim := dims[i]
 
 		db, err := decode.DecodeBlock(*b, dim)
@@ -40,7 +40,7 @@ func modifyBlocks(blocks []msq.Block, dims []gen.Point) error {
 			return err
 		}
 
-		*b = m.Block()
+		*b = m.Body()
 	}
 
 	return nil
@@ -56,37 +56,40 @@ func main() {
 
 	inDir := os.Args[1]
 
-	blocks0, blocks1, err := wlutil.ReadAndParseGames(inDir)
+	descs0, descs1, err := wlutil.ReadAndParseGames(inDir)
 	if err != nil {
 		onErr(err)
 	}
 
+	bodies0 := wlutil.DescsToBodies(descs0)
+	bodies1 := wlutil.DescsToBodies(descs1)
+
 	// Set random encounter chance to 0.
-	if err := modifyBlocks(blocks0[:defs.Block0NumBlocks], defs.MapDims[0]); err != nil {
+	if err := modifyBlocks(bodies0[:defs.Block0NumBlocks], defs.MapDims[0]); err != nil {
 		panic(err.Error())
 	}
-	if err := modifyBlocks(blocks1[:defs.Block1NumBlocks], defs.MapDims[1]); err != nil {
+	if err := modifyBlocks(bodies1[:defs.Block1NumBlocks], defs.MapDims[1]); err != nil {
 		panic(err.Error())
 	}
 
 	// Set all PCs' attributes to 127.
 	for i := 0; i < 4; i++ {
-		blocks0[20].EncSection[i*0x100+0x10e] = 0x7f
-		blocks0[20].EncSection[i*0x100+0x10f] = 0x7f
-		blocks0[20].EncSection[i*0x100+0x110] = 0x7f
-		blocks0[20].EncSection[i*0x100+0x111] = 0x7f
-		blocks0[20].EncSection[i*0x100+0x112] = 0x7f
-		blocks0[20].EncSection[i*0x100+0x113] = 0x7f
-		blocks0[20].EncSection[i*0x100+0x114] = 0x7f
-		blocks0[20].EncSection[i*0x100+0x11a] = 15
+		bodies0[20].EncSection[i*0x100+0x10e] = 0x7f
+		bodies0[20].EncSection[i*0x100+0x10f] = 0x7f
+		bodies0[20].EncSection[i*0x100+0x110] = 0x7f
+		bodies0[20].EncSection[i*0x100+0x111] = 0x7f
+		bodies0[20].EncSection[i*0x100+0x112] = 0x7f
+		bodies0[20].EncSection[i*0x100+0x113] = 0x7f
+		bodies0[20].EncSection[i*0x100+0x114] = 0x7f
+		bodies0[20].EncSection[i*0x100+0x11a] = 15
 
 		// Fill up PCs' inventory.
 		for j := 0; j < 50; j++ {
-			blocks0[20].EncSection[i*0x100+0x1bd+j] = byte(j)
+			bodies0[20].EncSection[i*0x100+0x1bd+j] = byte(j)
 		}
 	}
 
-	if err := wlutil.SerializeAndWriteGames(blocks0, blocks1, inDir); err != nil {
+	if err := wlutil.SerializeAndWriteGames(bodies0, bodies1, inDir); err != nil {
 		onErr(err)
 	}
 }

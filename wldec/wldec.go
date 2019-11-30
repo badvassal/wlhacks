@@ -47,22 +47,22 @@ func dumpCentralDir(cd decode.CentralDir, outDir string) error {
 	return dumpJson(cd, outDir+"/centraldir.json")
 }
 
-func dumpRawData(block msq.Block, outDir string) error {
+func dumpRawData(body msq.Body, outDir string) error {
 	encfn := outDir + "/encsection.bin"
-	if err := ioutil.WriteFile(encfn, block.EncSection, 0644); err != nil {
+	if err := ioutil.WriteFile(encfn, body.EncSection, 0644); err != nil {
 		return wlerr.Wrapf(err, "failed to write enc section to disk")
 	}
 
 	plnfn := outDir + "/plainsection.bin"
-	if err := ioutil.WriteFile(plnfn, block.PlainSection, 0644); err != nil {
+	if err := ioutil.WriteFile(plnfn, body.PlainSection, 0644); err != nil {
 		return wlerr.Wrapf(err, "failed to write plain section to disk")
 	}
 
 	return nil
 }
 
-func dumpSizes(block msq.Block, dim gen.Point, outDir string) error {
-	cb, err := decode.CarveBlock(block, dim)
+func dumpSizes(body msq.Body, dim gen.Point, outDir string) error {
+	cb, err := decode.CarveBlock(body, dim)
 	if err != nil {
 		return err
 	}
@@ -74,8 +74,8 @@ func dumpSizes(block msq.Block, dim gen.Point, outDir string) error {
 	return nil
 }
 
-func dumpOffsets(block msq.Block, dim gen.Point, outDir string) error {
-	cb, err := decode.CarveBlock(block, dim)
+func dumpOffsets(body msq.Body, dim gen.Point, outDir string) error {
+	cb, err := decode.CarveBlock(body, dim)
 	if err != nil {
 		return err
 	}
@@ -87,15 +87,15 @@ func dumpOffsets(block msq.Block, dim gen.Point, outDir string) error {
 	return nil
 }
 
-func dumpMeta(block msq.Block, outDir string) error {
-	if err := dumpJson(block, outDir+"/meta.json"); err != nil {
+func dumpMeta(desc msq.Desc, outDir string) error {
+	if err := dumpJson(desc, outDir+"/meta.json"); err != nil {
 		return err
 	}
 
 	return nil
 }
 
-func dumpBlock(block msq.Block, gameIdx int, blockIdx int, outDir string) error {
+func dumpBlock(desc msq.Desc, gameIdx int, blockIdx int, outDir string) error {
 	decErr := func(err error) error {
 		return wlerr.Wrapf(err,
 			"failed to decode block %d,%d", gameIdx, blockIdx)
@@ -106,25 +106,27 @@ func dumpBlock(block msq.Block, gameIdx int, blockIdx int, outDir string) error 
 		return decErr(err)
 	}
 
-	if err := dumpMeta(block, outDir); err != nil {
+	if err := dumpMeta(desc, outDir); err != nil {
 		return decErr(err)
 	}
 
+	body := desc.Body
+
 	dim := defs.MapDims[gameIdx][blockIdx]
-	db, err := decode.DecodeBlock(block, dim)
+	db, err := decode.DecodeBlock(body, dim)
 	if err != nil {
 		return decErr(err)
 	}
 
-	if err := dumpRawData(block, outDir); err != nil {
+	if err := dumpRawData(body, outDir); err != nil {
 		return decErr(err)
 	}
 
-	if err := dumpOffsets(block, dim, outDir); err != nil {
+	if err := dumpOffsets(body, dim, outDir); err != nil {
 		return decErr(err)
 	}
 
-	if err := dumpSizes(block, dim, outDir); err != nil {
+	if err := dumpSizes(body, dim, outDir); err != nil {
 		return decErr(err)
 	}
 
@@ -182,7 +184,7 @@ func dumpBlock(block msq.Block, gameIdx int, blockIdx int, outDir string) error 
 	return nil
 }
 
-func partialDump(block msq.Block, gameIdx int, blockIdx int, outDir string) error {
+func partialDump(desc msq.Desc, gameIdx int, blockIdx int, outDir string) error {
 	decErr := func(err error) error {
 		return wlerr.Wrapf(err,
 			"failed to decode block %d,%d", gameIdx, blockIdx)
@@ -192,16 +194,16 @@ func partialDump(block msq.Block, gameIdx int, blockIdx int, outDir string) erro
 
 	dim := defs.MapDims[gameIdx][blockIdx]
 
-	if err := dumpRawData(block, outDir); err != nil {
+	if err := dumpRawData(desc.Body, outDir); err != nil {
 		return decErr(err)
 	}
 
-	if err := dumpOffsets(block, dim, outDir); err != nil {
+	if err := dumpOffsets(desc.Body, dim, outDir); err != nil {
 		fmt.Fprintf(os.Stderr, "partial dump failed: %s\n", err.Error())
 
 		fmt.Fprintf(os.Stderr, "attempting a minimal central directory dump\n")
 		off := decode.MapDataLen(dim)
-		blob, err := gen.ExtractBlob(block.EncSection, off,
+		blob, err := gen.ExtractBlob(desc.Body.EncSection, off,
 			off+decode.CentralDirLen)
 		if err != nil {
 			fmt.Fprintf(os.Stderr, "minimal central directory dump failed\n")
@@ -220,7 +222,7 @@ func partialDump(block msq.Block, gameIdx int, blockIdx int, outDir string) erro
 		return nil
 	}
 
-	cb, err := decode.CarveBlock(block, defs.MapDims[gameIdx][blockIdx])
+	cb, err := decode.CarveBlock(desc.Body, defs.MapDims[gameIdx][blockIdx])
 	if err != nil {
 		return decErr(err)
 	}
@@ -237,13 +239,13 @@ func partialDump(block msq.Block, gameIdx int, blockIdx int, outDir string) erro
 	return nil
 }
 
-func dumpGame(blocks []msq.Block, gameIdx int, outDir string) {
-	for i, block := range blocks {
-		if err := dumpBlock(block, gameIdx, i, outDir); err != nil {
+func dumpGame(descs []msq.Desc, gameIdx int, outDir string) {
+	for i, desc := range descs {
+		if err := dumpBlock(desc, gameIdx, i, outDir); err != nil {
 			fmt.Fprintf(os.Stderr, "failed to dump block: %s\n", err.Error())
 
 			fmt.Fprintf(os.Stderr, "attempting a partial dump\n")
-			if err := partialDump(block, gameIdx, i, outDir); err != nil {
+			if err := partialDump(desc, gameIdx, i, outDir); err != nil {
 				fmt.Fprintf(os.Stderr, "partial dump failed: %s\n", err.Error())
 			}
 		}
@@ -261,29 +263,31 @@ func main() {
 	inDir := os.Args[1]
 	outDir := os.Args[2]
 
-	blocks0, blocks1, err := wlutil.ReadAndParseGames(inDir)
+	descs0, descs1, err := wlutil.ReadAndParseGames(inDir)
 	if err != nil {
 		onErr(err)
 	}
 
-	dumpGame(blocks0[:defs.Block0NumBlocks], 0, outDir)
-	dumpGame(blocks1[:defs.Block1NumBlocks], 1, outDir)
+	// Dump map blocks.
+	dumpGame(descs0[:defs.Block0NumBlocks], 0, outDir)
+	dumpGame(descs1[:defs.Block1NumBlocks], 1, outDir)
 
-	for i := defs.Block0NumBlocks; i < len(blocks0); i++ {
+	// Dump bodies of non-map blocks.
+	for i := defs.Block0NumBlocks; i < len(descs0); i++ {
 		destDir := outDir + "/" + calcOutSubdir(0, i)
 		if err := os.MkdirAll(destDir, 0755); err != nil {
 			onErr(err)
 		}
-		if err := dumpRawData(blocks0[i], destDir); err != nil {
+		if err := dumpRawData(descs0[i].Body, destDir); err != nil {
 			onErr(err)
 		}
 	}
-	for i := defs.Block1NumBlocks; i < len(blocks1); i++ {
+	for i := defs.Block1NumBlocks; i < len(descs1); i++ {
 		destDir := outDir + "/" + calcOutSubdir(1, i)
 		if err := os.MkdirAll(destDir, 0755); err != nil {
 			onErr(err)
 		}
-		if err := dumpRawData(blocks1[i], destDir); err != nil {
+		if err := dumpRawData(descs1[i].Body, destDir); err != nil {
 			onErr(err)
 		}
 	}
