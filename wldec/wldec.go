@@ -156,6 +156,10 @@ func dumpBlock(desc msq.Desc, gameIdx int, blockIdx int, outDir string) error {
 		return decErr(err)
 	}
 
+	if err := dumpJson(db.NPCTable, outDir+"/npcs.json"); err != nil {
+		return decErr(err)
+	}
+
 	if err := dumpJson(db.MonsterNames, outDir+"/monsternames.json"); err != nil {
 		return decErr(err)
 	}

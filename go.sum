@@ -12,6 +12,8 @@ github.com/badvassal/wllib v0.0.8 h1:vD68+oVKYY51h+NBru/Veh/FYnxCGuM2R+MPr4J5yc8
 github.com/badvassal/wllib v0.0.8/go.mod h1:5ok43+VU8n52MiejMF399KinLLhC3EVKx9ZJsbMyE4s=
 github.com/badvassal/wllib v0.0.10 h1:+L6Cp13vuwxbPHpWgMacxRACp7hvTjIS39ynLFON0pI=
 github.com/badvassal/wllib v0.0.10/go.mod h1:5ok43+VU8n52MiejMF399KinLLhC3EVKx9ZJsbMyE4s=
+github.com/badvassal/wllib v0.0.11 h1:KoHiV1khJKg/0sJ8ndPTutoF00rHnACuvHRqYe+RsHQ=
+github.com/badvassal/wllib v0.0.11/go.mod h1:5ok43+VU8n52MiejMF399KinLLhC3EVKx9ZJsbMyE4s=
 github.com/badvassal/wlmanip v0.0.1 h1:w+b06KATBh7MmvjTpDiHfdUe12Zvk42ebmv7X/Vl/aU=
 github.com/badvassal/wlmanip v0.0.1/go.mod h1:UAzTS98OG6oktxGwIYQLuRM3RdEUjbSuIQSPjebnNd8=
 github.com/badvassal/wlmanip v0.0.2 h1:LgOqFC79htcG4jQliqtOkFw1gpUCYYSPds/TomuaaOE=
