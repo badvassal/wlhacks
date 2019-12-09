@@ -82,6 +82,7 @@ func main() {
 		bodies0[20].EncSection[i*0x100+0x113] = 0x7f
 		bodies0[20].EncSection[i*0x100+0x114] = 0x7f
 		bodies0[20].EncSection[i*0x100+0x11a] = 15
+		bodies0[20].EncSection[i*0x100+0x120] = 0x7f
 
 		// Fill up PCs' inventory.
 		for j := 0; j < 50; j++ {
